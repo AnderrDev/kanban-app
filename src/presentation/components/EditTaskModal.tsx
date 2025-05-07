@@ -33,7 +33,7 @@ export function EditTaskModal({ visible, task, onClose, onUpdate, onDelete }: Ed
         title,
         description,
         priority,
-        status, // 👈 También actualizamos el estado
+        status, // 
         updatedAt: new Date(),
       };
       onUpdate(updatedTask);
