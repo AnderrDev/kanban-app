@@ -23,7 +23,9 @@ export class FirebaseTaskRepositoryImpl implements ITaskRepository {
         status: task.status,
         createdAt: task.createdAt,
         updatedAt: task.updatedAt,
+        priority: task.priority,
       });
+
     } catch (error) {
       console.error('Error creating task:', error);
       throw new Error('No se pudo crear la tarea. Intenta de nuevo.');
@@ -70,8 +72,6 @@ export class FirebaseTaskRepositoryImpl implements ITaskRepository {
 
   async getTasks(): Promise<Task[]> {
     try {
-      console.log('Fetching tasks from Firestore...');
-      
       const querySnapshot = await getDocs(this.taskCollection);
       const tasks: Task[] = [];
 
@@ -84,14 +84,15 @@ export class FirebaseTaskRepositoryImpl implements ITaskRepository {
           status: data.status,
           createdAt: data.createdAt.toDate(),
           updatedAt: data.updatedAt.toDate(),
+          priority: data.priority ?? 'Media', // 👈 Si no tiene priority, ponemos 'Media'
         });
       });
-      console.log('tasks', tasks);
-      
+
       return tasks;
     } catch (error) {
       console.error('Error fetching tasks:', error);
       throw new Error('No se pudieron obtener las tareas.');
     }
   }
+
 }

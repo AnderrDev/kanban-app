@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet } from 'react-native';
-import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
 import { TaskCard } from './TaskCard';
 import { Task } from '../../data/entities/Task';
 
@@ -7,51 +6,48 @@ interface ColumnProps {
   title: string;
   tasks: Task[];
   onTaskPress?: (task: Task) => void;
-  onTaskDrop?: (task: Task, newIndex: number) => void;
+  color?: string;
 }
 
-export function Column({ title, tasks, onTaskPress, onTaskDrop }: ColumnProps) {
+export function Column({ title, tasks, onTaskPress, color = '#FFFFFF' }: ColumnProps) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: color }]}>
       <Text style={styles.header}>{title}</Text>
 
-      <DraggableFlatList
-        data={tasks}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, drag, isActive }) => (
-          <ScaleDecorator>
-            <TaskCard
-              task={item}
-              onPress={() => onTaskPress?.(item)}
-            />
-          </ScaleDecorator>
-        )}
-        onDragEnd={({ data, from, to }) => {
-          if (onTaskDrop) {
-            onTaskDrop(data[to], to);
-          }
-        }}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 8 }}
-      />
+      <View style={styles.taskList}>
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onPress={() => onTaskPress?.(task)}
+          />
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F4F4F4',
-    borderRadius: 8,
-    padding: 8,
+    borderRadius: 10,
+    padding: 12,
     marginHorizontal: 8,
-    flex: 1,
-    maxHeight: '95%',
+    width: 280,
+    maxHeight: '85%',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
   },
   header: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 12,
     textAlign: 'center',
-    color: '#555555',
+    color: '#333333',
+  },
+  taskList: {
+    flexGrow: 1,
   },
 });

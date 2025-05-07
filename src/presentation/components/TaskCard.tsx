@@ -1,13 +1,14 @@
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Task } from '../../data/entities/Task';
+
 interface TaskCardProps {
   task: Task;
-  onPress: (task: Task) => void;
+  onPress?: () => void;
 }
 
 export function TaskCard({ task, onPress }: TaskCardProps) {
   return (
-    <TouchableOpacity style={styles.card} onPress={() => onPress(task)}>
+    <TouchableOpacity style={styles.card} onPress={onPress}>
       <Text style={styles.title}>{task.title}</Text>
       <Text style={styles.description}>{task.description}</Text>
     </TouchableOpacity>
@@ -16,20 +17,21 @@ export function TaskCard({ task, onPress }: TaskCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 12,
     elevation: 3,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
   title: {
-    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 4,
+    fontSize: 16,
+    marginBottom: 6,
+    color: '#333',
   },
   description: {
     fontSize: 14,
