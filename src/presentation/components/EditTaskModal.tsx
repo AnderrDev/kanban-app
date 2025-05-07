@@ -1,7 +1,7 @@
 import { Modal, View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useState, useEffect } from 'react';
-import { Task, TaskPriority } from '../../data/entities/Task';
+import { Task, TaskPriority, TaskStatus } from '../../data/entities/Task';
 
 interface EditTaskModalProps {
   visible: boolean;
@@ -15,12 +15,14 @@ export function EditTaskModal({ visible, task, onClose, onUpdate, onDelete }: Ed
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<TaskPriority>('Media');
+  const [status, setStatus] = useState<TaskStatus>('todo'); // 👈 Estado de la tarea
 
   useEffect(() => {
     if (task) {
       setTitle(task.title);
       setDescription(task.description);
       setPriority(task.priority);
+      setStatus(task.status);
     }
   }, [task]);
 
@@ -31,6 +33,7 @@ export function EditTaskModal({ visible, task, onClose, onUpdate, onDelete }: Ed
         title,
         description,
         priority,
+        status, // 👈 También actualizamos el estado
         updatedAt: new Date(),
       };
       onUpdate(updatedTask);
@@ -64,6 +67,7 @@ export function EditTaskModal({ visible, task, onClose, onUpdate, onDelete }: Ed
             multiline
           />
 
+          {/* Picker de Prioridad */}
           <Text style={styles.label}>Prioridad:</Text>
           <Picker
             selectedValue={priority}
@@ -73,6 +77,18 @@ export function EditTaskModal({ visible, task, onClose, onUpdate, onDelete }: Ed
             <Picker.Item label="Alta" value="Alta" />
             <Picker.Item label="Media" value="Media" />
             <Picker.Item label="Baja" value="Baja" />
+          </Picker>
+
+          {/* Picker de Estado */}
+          <Text style={styles.label}>Estado:</Text>
+          <Picker
+            selectedValue={status}
+            onValueChange={(itemValue) => setStatus(itemValue as TaskStatus)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Por hacer (To Do)" value="todo" />
+            <Picker.Item label="En progreso (In Progress)" value="inProgress" />
+            <Picker.Item label="Hecho (Done)" value="done" />
           </Picker>
 
           <View style={styles.buttonRow}>

@@ -8,7 +8,7 @@ import { EditTaskModal } from '../../components/EditTaskModal';
 import { useState } from 'react';
 import { Task, TaskStatus, TaskPriority } from '../../../data/entities/Task';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Picker } from '@react-native-picker/picker'; // 👈 Instala si no lo tienes
+import { Picker } from '@react-native-picker/picker'; // 👈
 
 export default function KanbanBoardScreen() {
   const { tasks, addTask, updateTask, deleteTask } = useBoard();
@@ -16,15 +16,25 @@ export default function KanbanBoardScreen() {
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [priorityFilter, setPriorityFilter] = useState<'all' | TaskPriority>('all'); // 👈 Nuevo estado
 
-  const filteredTasks = tasks.filter(task => 
-    priorityFilter === 'all' || task.priority === priorityFilter
-  );
+  const [priorityFilter, setPriorityFilter] = useState<'all' | TaskPriority>('all');
+  const [dateOrder, setDateOrder] = useState<'newest' | 'oldest'>('newest'); // 👈 Nuevo estado
 
-  const todoTasks = filteredTasks.filter(task => task.status === 'todo');
-  const inProgressTasks = filteredTasks.filter(task => task.status === 'inProgress');
-  const doneTasks = filteredTasks.filter(task => task.status === 'done');
+  const filteredAndSortedTasks = tasks
+    .filter(task =>
+      priorityFilter === 'all' || task.priority === priorityFilter
+    )
+    .sort((a, b) => {
+      if (dateOrder === 'newest') {
+        return b.createdAt.getTime() - a.createdAt.getTime(); // Más nuevas primero
+      } else {
+        return a.createdAt.getTime() - b.createdAt.getTime(); // Más viejas primero
+      }
+    });
+
+  const todoTasks = filteredAndSortedTasks.filter(task => task.status === 'todo');
+  const inProgressTasks = filteredAndSortedTasks.filter(task => task.status === 'inProgress');
+  const doneTasks = filteredAndSortedTasks.filter(task => task.status === 'done');
 
   const handleCreateTask = async (title: string, description: string, priority: TaskPriority) => {
     const newTask = {
@@ -62,27 +72,43 @@ export default function KanbanBoardScreen() {
           <Button title="Cerrar sesión" onPress={logout} />
         </View>
 
-        {/* Picker de filtro */}
-        <View style={styles.filterContainer}>
-          <Text style={styles.filterLabel}>Filtrar por prioridad:</Text>
-          <Picker
-            selectedValue={priorityFilter}
-            onValueChange={(itemValue) => setPriorityFilter(itemValue as 'all' | TaskPriority)}
-            style={styles.picker}
-          >
-            <Picker.Item label="Todas" value="all" />
-            <Picker.Item label="Alta" value="Alta" />
-            <Picker.Item label="Media" value="Media" />
-            <Picker.Item label="Baja" value="Baja" />
-          </Picker>
+        {/* Filtros */}
+        <View style={styles.filtersContainer}>
+          <View style={styles.filterGroup}>
+            <Text style={styles.filterLabel}>Filtrar por prioridad:</Text>
+            <Picker
+              selectedValue={priorityFilter}
+              onValueChange={(itemValue) => setPriorityFilter(itemValue as 'all' | TaskPriority)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Todas" value="all" />
+              <Picker.Item label="Alta" value="Alta" />
+              <Picker.Item label="Media" value="Media" />
+              <Picker.Item label="Baja" value="Baja" />
+            </Picker>
+          </View>
+
+          <View style={styles.filterGroup}>
+            <Text style={styles.filterLabel}>Ordenar por fecha:</Text>
+            <Picker
+              selectedValue={dateOrder}
+              onValueChange={(itemValue) => setDateOrder(itemValue as 'newest' | 'oldest')}
+              style={styles.picker}
+            >
+              <Picker.Item label="Más recientes primero" value="newest" />
+              <Picker.Item label="Más antiguas primero" value="oldest" />
+            </Picker>
+          </View>
         </View>
 
+        {/* Tablero */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.board}>
           <Column title="To Do" tasks={todoTasks} onTaskPress={handleTaskPress} color="#AEDFF7" />
           <Column title="In Progress" tasks={inProgressTasks} onTaskPress={handleTaskPress} color="#FFE58A" />
           <Column title="Done" tasks={doneTasks} onTaskPress={handleTaskPress} color="#B7E7A1" />
         </ScrollView>
 
+        {/* Botón flotante y modales */}
         <FloatingActionButton onPress={() => setCreateModalVisible(true)} />
 
         <CreateTaskModal
@@ -120,9 +146,15 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
   },
-  filterContainer: {
-    paddingHorizontal: 16,
+  filtersContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginBottom: 10,
+    paddingHorizontal: 16,
+  },
+  filterGroup: {
+    flex: 1,
+    marginHorizontal: 8,
   },
   filterLabel: {
     fontSize: 16,
