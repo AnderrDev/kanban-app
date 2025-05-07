@@ -1,7 +1,12 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import {
+  initializeAuth,  // @ts-ignore
+  getReactNativePersistence,
+} from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Tu configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyASxkvlf1-7SipvafgRf00OiqdLVQI6U9U",
   authDomain: "kanbanapp-e0748.firebaseapp.com",
@@ -12,8 +17,13 @@ const firebaseConfig = {
   appId: "1:52846899837:web:6e5384c763d757fe5ab714"
 };
 
-// Initialize Firebase
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
-// Initialize Firebase
-export const auth = getAuth(app);
+
+// Inicializar Auth con persistencia de sesión
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
+
+// Inicializar Firestore
 export const db = getFirestore(app);

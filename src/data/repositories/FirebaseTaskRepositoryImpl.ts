@@ -70,6 +70,8 @@ export class FirebaseTaskRepositoryImpl implements ITaskRepository {
 
   async getTasks(): Promise<Task[]> {
     try {
+      console.log('Fetching tasks from Firestore...');
+      
       const querySnapshot = await getDocs(this.taskCollection);
       const tasks: Task[] = [];
 
@@ -84,7 +86,8 @@ export class FirebaseTaskRepositoryImpl implements ITaskRepository {
           updatedAt: data.updatedAt.toDate(),
         });
       });
-
+      console.log('tasks', tasks);
+      
       return tasks;
     } catch (error) {
       console.error('Error fetching tasks:', error);

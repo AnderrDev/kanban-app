@@ -13,11 +13,11 @@ interface BoardContextType {
 
 const BoardContext = createContext<BoardContextType>({
   tasks: [],
-  loadTasks: async () => {},
-  addTask: async () => {},
-  updateTask: async () => {},
-  moveTask: async () => {},
-  deleteTask: async () => {},
+  loadTasks: async () => { throw new Error('loadTasks called outside of BoardProvider'); },
+  addTask: async () => { throw new Error('addTask called outside of BoardProvider'); },
+  updateTask: async () => { throw new Error('updateTask called outside of BoardProvider'); },
+  moveTask: async () => { throw new Error('moveTask called outside of BoardProvider'); },
+  deleteTask: async () => { throw new Error('deleteTask called outside of BoardProvider'); },
 });
 
 export const useBoard = () => useContext(BoardContext);

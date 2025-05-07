@@ -5,6 +5,8 @@ export class CreateTaskUseCase {
   constructor(private repository: ITaskRepository) {}
 
   async execute(task: Task): Promise<void> {
+    console.log('Creating task:', task);
+  
     await this.repository.createTask(task);
   }
 }

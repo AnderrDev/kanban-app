@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
 import { TaskCard } from './TaskCard';
 import { Task } from '../../data/entities/Task';
 
@@ -6,22 +7,30 @@ interface ColumnProps {
   title: string;
   tasks: Task[];
   onTaskPress?: (task: Task) => void;
+  onTaskDrop?: (task: Task, newIndex: number) => void;
 }
 
-export function Column({ title, tasks, onTaskPress }: ColumnProps) {
+export function Column({ title, tasks, onTaskPress, onTaskDrop }: ColumnProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{title}</Text>
 
-      <FlatList
+      <DraggableFlatList
         data={tasks}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TaskCard
-            task={item}
-            onPress={() => onTaskPress?.(item)}
-          />
+        renderItem={({ item, drag, isActive }) => (
+          <ScaleDecorator>
+            <TaskCard
+              task={item}
+              onPress={() => onTaskPress?.(item)}
+            />
+          </ScaleDecorator>
         )}
+        onDragEnd={({ data, from, to }) => {
+          if (onTaskDrop) {
+            onTaskDrop(data[to], to);
+          }
+        }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 8 }}
       />
