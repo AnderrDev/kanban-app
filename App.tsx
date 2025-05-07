@@ -1,20 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { AuthProvider, useAuth } from './src/presentation/contexts/AuthContext';
+import LoginScreen from './src/presentation/screens/auth/LoginScreen';
+import RegisterScreen from './src/presentation/screens/auth/RegisterScreen';
 
-export default function App() {
+const Stack = createNativeStackNavigator();
+
+function AppNavigation() {
+  const { user } = useAuth();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        {user ? (
+          <>
+            {/* <Stack.Screen name="KanbanBoard" component={KanbanBoardScreen} /> */}
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppNavigation />
+    </AuthProvider>
+  );
+}

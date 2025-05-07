@@ -12,10 +12,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "scheme": "kanbanapp",
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.tcs.kanbanapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

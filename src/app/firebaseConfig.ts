@@ -1,0 +1,19 @@
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyASxkvlf1-7SipvafgRf00OiqdLVQI6U9U",
+  authDomain: "kanbanapp-e0748.firebaseapp.com",
+  databaseURL: "https://kanbanapp-e0748-default-rtdb.firebaseio.com",
+  projectId: "kanbanapp-e0748",
+  storageBucket: "kanbanapp-e0748.appspot.com",
+  messagingSenderId: "52846899837",
+  appId: "1:52846899837:web:6e5384c763d757fe5ab714"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+// Initialize Firebase
+export const auth = getAuth(app);
+export const db = getFirestore(app);
